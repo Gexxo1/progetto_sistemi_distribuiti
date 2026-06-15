@@ -71,19 +71,38 @@ Per eseguire i test:
 
 ## Esempi di chiamate pubbliche
 
+Le seguenti chiamate possono essere provate direttamente da Thunder Client, Postman o da un qualsiasi client HTTP dopo aver avviato l'applicazione.
+
 ```http
+GET http://localhost:8080/api/products/suggestions?category=Skincare
 GET http://localhost:8080/api/products/categories
 GET http://localhost:8080/api/products/search?keyword=MacBook
+GET http://localhost:8080/api/products/my-history
 GET http://localhost:8080/api/products/top-rated?category=Laptops
 GET http://localhost:8080/api/products/best-price?category=Fashion
 GET http://localhost:8080/api/products/reviews?id=1
 GET http://localhost:8080/api/products/price-ranges
+GET http://localhost:8080/api/products/similar?category=Laptops&productName=Apple MacBook Pro
 GET http://localhost:8080/api/products/similar?category=Laptops&productName=Apple%20MacBook%20Pro
 GET http://localhost:8080/api/products/1/similar
+GET http://localhost:8080/api/products/suggestions?category=Laptops&productName=Apple MacBook Pro
 GET http://localhost:8080/api/products/suggestions?category=Laptops&productName=Apple%20MacBook%20Pro
 ```
 
-L'endpoint `/suggestions` rappresenta il Request Batch del progetto: in una singola risposta restituisce prodotti con rating migliore, prodotto con prezzo migliore e prodotti simili.
+L'endpoint `/suggestions` rappresenta il Request Batch del progetto: in una singola risposta restituisce prodotti con rating migliore, prodotto con prezzo migliore e prodotti simili. In pratica aggrega queste tre operazioni:
+
+```http
+GET http://localhost:8080/api/products/top-rated?category=Laptops
+GET http://localhost:8080/api/products/best-price?category=Laptops
+GET http://localhost:8080/api/products/similar?category=Laptops&productName=Apple%20MacBook%20Pro
+```
+
+Il dettaglio interno di un prodotto restituisce il modello `Product` completo, incluse le recensioni, ma richiede il ruolo `AMMINISTRATORE`:
+
+```http
+GET http://localhost:8080/api/products/1
+Authorization: Bearer <token>
+``r
 
 ## Login e chiamate protette
 
@@ -120,16 +139,22 @@ PUT http://localhost:8080/api/products/1/price?price=99.99
 Authorization: Bearer <token>
 ```
 
-## Percorso consigliato per la dimostrazione
+## Percorso consigliato per la dimostrazione 
 
-1. Mostrare il caricamento dei dataset in `ProductRepository`.
-2. Mostrare la Remote Facade in `ProductFacadeController`.
-3. Eseguire chiamate pubbliche: categorie, ricerca, top-rated e best-price.
-4. Mostrare il Request Batch con `/api/products/suggestions`.
-5. Effettuare il login con `luigi` e aggiungere una recensione.
-6. Verificare la recensione con `/api/products/reviews?id=1`.
-7. Effettuare il login con `prof` e mostrare la modifica del prezzo o il dettaglio admin.
-8. Eseguire i test automatici con `.\mvnw.cmd test`.
+Esempio di dimostrazione manuale:
+1. Avviare l'applicazione `.\mvnw.cmd spring-boot:run` oppure avviare `ProgettoSistemiDistribuitiApplication.java`
+2. Effettuare il login `[POST] /api/auth/login`con `mario` (che ha ruolo `UTENTE`) compilando il JSON & inserire il token (per maggiori dettagli vedere `Esempi di chiamate pubbliche`).
+3. Mostrare il Request Batch con `[GET] /api/products/suggestions`.
+4. Mostrare la cronologia di sessione con `[GET] /api/products/my-history` dopo una ricerca.
+5. Effettuare il login `luigi` (come fatto in `#2`).
+6. Aggiungere una recensione con `[POST] /api/{id}/reviews`.
+7. Verificare la recensione con `[GET] /api/products/reviews?id=1`.
+8. Effettuare il login con `prof` (come fatto in `#2`).
+9. Mostrare `[PUT] /api/products/{id}/price` per provare a modificare prezzi.
+10. Controllare con `[GET] /api/products/1` se il prezzo è stato cambiato.
+
+Testing automatico:
+1. Eseguire i test automatici con `.\mvnw.cmd test`.
 
 ## Documentazione
 
