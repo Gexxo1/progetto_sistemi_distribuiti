@@ -1,0 +1,61 @@
+# File generati da compilazione e test
+target/
+build/
+out/
+*.class
+
+# Wrapper Maven: si tiene lo script, non il jar scaricato/generato
+.mvn/wrapper/maven-wrapper.jar
+
+# File temporanei e log
+*.log
+*.tmp
+*.swp
+*.bak
+*.pid
+
+# Configurazioni locali e segreti
+.env
+.env.*
+application-local.properties
+
+# File ausiliari LaTeX eventualmente generati dalla relazione
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# File specifici degli IDE
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# Documentazione generata automaticamente da Spring Initializr, non necessaria alla demo
+HELP.md

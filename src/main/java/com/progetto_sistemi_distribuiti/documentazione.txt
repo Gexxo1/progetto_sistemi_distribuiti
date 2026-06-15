@@ -1,0 +1,192 @@
+--- Login:
+1. Mettere Auth "None"
+2. Body inserire JSON con username e password del tipo:
+{
+  "username": "prof",
+  "password": "password"
+}
+3. Inserire POST --> http://localhost:8080/api/auth/login
+4. Ottenere Token e metterlo dentro "Auth"->"Bearer"
+---------------------------------------------------------------
+
+--Esempi comandi (GET): 
+
+http://localhost:8080/api/products/suggestions?category=Skincare
+
+Elencare categorie:
+http://localhost:8080/api/products/categories
+
+Cercare prodotti per keyword 
+http://localhost:8080/api/products/search?keyword=MacBook
+
+Vedere cronologie di ricerche della sessione 
+http://localhost:8080/api/products/my-history
+
+Prodotti con miglior rating in una categoria 
+http://localhost:8080/api/products/top-rated?category=Laptops
+
+Prodotto con miglior prezzo in una categoria 
+http://localhost:8080/api/products/best-price?category=Fashion
+
+Review di un prodotto
+http://localhost:8080/api/products/reviews?id=1
+
+Fasce di prezzo
+http://localhost:8080/api/products/price-ranges
+
+Prodotti simili per categorie e nome (richiede più di 2MB)
+http://localhost:8080/api/products/similar?category=Laptops&productName=Apple MacBook Pro
+
+Prodotti simili partendo dall'id
+http://localhost:8080/api/products/1/similar
+
+Dettaglio prodotto interno per debug admin (restituisce Product, con reviews)
+http://localhost:8080/api/products/1
+
+Batch di suggerimenti
+http://localhost:8080/api/products/suggestions?category=Laptops&productName=Apple MacBook Pro
+http://localhost:8080/api/products/suggestions?category=Laptops&productName=Apple%20MacBook%20Pro
+
+questo è un batch, perchè unisce tre comandi in uno solo:
+GET /api/products/top-rated?category=Laptops
+GET /api/products/best-price?category=Laptops
+
+GET /api/products/similar?category=Laptops&productName=Apple%20MacBook%20Pro
+
+---------------------------------------------------------------------------------------------
+
+--Come fare il POST
+1. Loggare con "luigi"
+2. Inserire nella JSON il testo da inserire
+3. Send
+
+Come fare il login:
+1. POST
+http://localhost:8080/api/auth/login
+con Body JSON
+{
+  "username": "luigi",
+  "password": "password"
+}
+utenti disponibili:
+mario / password -> UTENTE
+luigi / password -> REVISORE
+prof / password  -> AMMINISTRATORE + REVISORE
+
+2. La risposta darà un token JWT
+aggiungere il token dato come risultato all'header
+header: Authorization | value: Bearer <token>
+
+3. Provare POST /api/products/1/reviews
+inserendo nel BODY -> Text -> tua review
+--------------------------------------------------
+
+Ordine Consigliato Di Prova:
+
+1. GET /api/products/categories
+2. GET /api/products/search?keyword=MacBook
+3. GET /api/products/top-rated?category=Laptops
+4. GET /api/products/suggestions?category=Laptops&productName=Apple MacBook Pro
+5. Login con luigi
+6. POST /api/products/1/reviews
+7. GET /api/products/reviews?id=1
+
+Così controlli sia la parte pubblica sia quella protetta con JWT
+
+--------------------------------------------------------------------------------
+Breve Relazione:
+
+1. Breve descrizione generale:
+
+Il progetto espone una API REST Spring Boot per interrogare dataset di prodotti caricati da CSV.
+  +il controller agisce come Remote Facade;
+  +il service contiene la logica applicativa;
+  +il repository carica e normalizza i dataset;
+Le GET sono pubbliche, mentre le operazioni di scrittura richiedono autenticazione JWT e ruoli.
+
+
+2. Spiegazione file principali:
+
+ProductFacadeController.java:   endpoint REST --> per definire gli URL
+ProductService.java:            logica di ricerca, rating, prezzo, simili
+ProductRepository.java:         caricamento CSV
+SecurityConfig.java:            sicurezza --> gestire i permessi delle richieste HTTP
+AppConfig.java:                 definisce utenti e ruoli
+JwtUtil.java:                   generazione token
+
+
+3. Percorso ideale:
+
+“Caricamento dataset”
+ProductRepository.java.
+
+“Mostro le API”
+ProductFacadeController.java.
+
+“Eseguo alcune chiamate pubbliche”
+Usiamo Thunder Client con categorie, ricerca, top-rated.
+
+“Mostro il batch”
+Chiamiamo /suggestions.
+
+“Mostro sicurezza e ruoli”
+Login con luigi, aggiunta review, verifica review.
+
+“Mostro che gli admin hanno endpoint separati”
+Login con prof, modifica prezzo.
+
+
++++++++++++++++++++TESTING+++++++++++++++++++
+
+I test automatici si trovano in:
+src/test/java/com/progetto_sistemi_distribuiti
+
+Classi principali:
+
+1. ProgettoSistemiDistribuitiApplicationTests.java
+   Controlla che il contesto Spring Boot si avvii correttamente.
+
+2. service/ProductServiceTests.java
+   Controlla la logica del service:
+   - categorie caricate dai CSV;
+   - prodotti top-rated;
+   - ordinamento per rating;
+   - prodotto con prezzo migliore;
+   - prodotti simili;
+   - recensioni di un prodotto inesistente.
+
+3. controller/ProductFacadeControllerTests.java
+   Controlla alcuni endpoint pubblici:
+   - /api/products/categories;
+   - /api/products/suggestions con due parametri: category e productName;
+   - /api/products/reviews.
+
+4. security/SecurityTests.java
+   Controlla sicurezza e ruoli:
+   - login e generazione token JWT;
+   - luigi puo' aggiungere recensioni;
+   - mario non puo' aggiungere recensioni;
+   - prof puo' modificare il prezzo;
+   - il dettaglio interno /api/products/{id} richiede ruolo AMMINISTRATORE.
+
+Per eseguire tutti i test:
+aprire il terminale nella cartella progetto_sistemi_distribuiti ed eseguire:
+
+.\mvnw.cmd test
+
+Se tutto funziona, Maven mostra:
+BUILD SUCCESS
+
+Differenza fra test manuali e automatici:
+- Thunder Client = test manuale, perche' controllo io la risposta;
+- JUnit/MockMvc = test automatico, perche' il codice controlla da solo status, JSON e permessi.
+
+
++++++++++++++++++++TROUBLESHOOTING+++++++++++++++++++
+
+--Porta non chiusa correttamente--
+Passo 1 - trova il process ID
+netstat -ano | findstr :8080
+
+Passo 2 - killa il PID trovato
+taskkill /PID <NUMERO_PID> /F

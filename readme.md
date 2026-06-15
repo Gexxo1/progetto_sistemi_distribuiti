@@ -1,0 +1,136 @@
+# Progetto Sistemi Distribuiti
+
+Questo repository contiene il progetto d'esame per il corso di **Sistemi Distribuiti** della Laurea Magistrale in Informatica. L'applicazione e' un backend REST sviluppato in Java 17 con Spring Boot 3.2.0 per consultare e gestire un catalogo di prodotti caricato da file CSV.
+
+Il sistema espone una Remote Facade HTTP sotto `/api/products`: il client non accede direttamente alla logica applicativa o ai dataset, ma interagisce con un insieme di endpoint REST. Le operazioni di lettura sono pubbliche, mentre le operazioni di scrittura sono protette tramite autenticazione JWT e controllo dei ruoli.
+
+## Tecnologie usate
+
+- Java 17
+- Spring Boot 3.2.0
+- Spring Web
+- Spring Security
+- JWT con libreria `jjwt`
+- Apache Commons CSV
+- JUnit e MockMvc per i test automatici
+- Maven Wrapper
+
+## Funzionalita' principali
+
+- caricamento in memoria di dataset CSV di prodotti;
+- elenco delle categorie disponibili;
+- ricerca prodotti tramite parola chiave;
+- recupero dei prodotti con rating migliore per categoria;
+- recupero del prodotto con prezzo migliore per categoria;
+- ricerca di prodotti simili per categoria e nome;
+- ricerca di prodotti simili partendo dall'id del prodotto;
+- consultazione delle recensioni;
+- raggruppamento dei prodotti per fasce di prezzo;
+- cronologia delle ricerche nella sessione utente;
+- endpoint batch `/api/products/suggestions`, che aggrega rating migliore, prezzo migliore e prodotti simili;
+- login con JWT;
+- aggiunta recensioni consentita ai revisori;
+- modifica dei prezzi consentita agli amministratori.
+
+## Struttura del progetto
+
+```text
+src/main/java/com/progetto_sistemi_distribuiti
+|-- controller   API REST e Remote Facade
+|-- service      logica applicativa
+|-- repository   caricamento e normalizzazione dei CSV
+|-- model        modello interno, DTO e sessione utente
+`-- security     login, JWT, filtri e regole di autorizzazione
+```
+
+I dataset sono in `src/main/resources`. I test automatici sono in `src/test/java/com/progetto_sistemi_distribuiti`.
+
+## Utenti di prova
+
+| Username | Password | Ruoli |
+| --- | --- | --- |
+| `mario` | `password` | `UTENTE` |
+| `luigi` | `password` | `REVISORE` |
+| `prof` | `password` | `AMMINISTRATORE`, `REVISORE` |
+
+## Avvio del progetto
+
+Da terminale, nella cartella del progetto:
+
+```powershell
+.\mvnw.cmd spring-boot:run
+```
+
+L'applicazione parte su `http://localhost:8080`.
+
+Per eseguire i test:
+
+```powershell
+.\mvnw.cmd test
+```
+
+## Esempi di chiamate pubbliche
+
+```http
+GET http://localhost:8080/api/products/categories
+GET http://localhost:8080/api/products/search?keyword=MacBook
+GET http://localhost:8080/api/products/top-rated?category=Laptops
+GET http://localhost:8080/api/products/best-price?category=Fashion
+GET http://localhost:8080/api/products/reviews?id=1
+GET http://localhost:8080/api/products/price-ranges
+GET http://localhost:8080/api/products/similar?category=Laptops&productName=Apple%20MacBook%20Pro
+GET http://localhost:8080/api/products/1/similar
+GET http://localhost:8080/api/products/suggestions?category=Laptops&productName=Apple%20MacBook%20Pro
+```
+
+L'endpoint `/suggestions` rappresenta il Request Batch del progetto: in una singola risposta restituisce prodotti con rating migliore, prodotto con prezzo migliore e prodotti simili.
+
+## Login e chiamate protette
+
+Per ottenere un token JWT:
+
+```http
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "luigi",
+  "password": "password"
+}
+```
+
+La risposta contiene un campo `token`. Per le chiamate protette va aggiunto l'header:
+
+```text
+Authorization: Bearer <token>
+```
+
+Esempi:
+
+```http
+POST http://localhost:8080/api/products/1/reviews
+Content-Type: text/plain
+Authorization: Bearer <token>
+
+Recensione inserita dal revisore
+```
+
+```http
+PUT http://localhost:8080/api/products/1/price?price=99.99
+Authorization: Bearer <token>
+```
+
+## Percorso consigliato per la dimostrazione
+
+1. Mostrare il caricamento dei dataset in `ProductRepository`.
+2. Mostrare la Remote Facade in `ProductFacadeController`.
+3. Eseguire chiamate pubbliche: categorie, ricerca, top-rated e best-price.
+4. Mostrare il Request Batch con `/api/products/suggestions`.
+5. Effettuare il login con `luigi` e aggiungere una recensione.
+6. Verificare la recensione con `/api/products/reviews?id=1`.
+7. Effettuare il login con `prof` e mostrare la modifica del prezzo o il dettaglio admin.
+8. Eseguire i test automatici con `.\mvnw.cmd test`.
+
+## Documentazione
+
+La relazione tecnica completa e' disponibile in `RELAZIONE.md` e nel PDF `Relazione_Sistemi_Distribuiti.pdf`.
