@@ -7,7 +7,7 @@ import java.util.List;
 public class SuggestionsBatchDTO {
 
     private List<ProductDTO> topRated;
-    private List<ProductDTO> bestPrices;
+    private List<ProductDTO> bestPrice;
     private List<ProductDTO> similar;
 
     // Costruttore vuoto (necessario a Spring per la conversione in JSON)
@@ -15,9 +15,9 @@ public class SuggestionsBatchDTO {
     }
 
     // Costruttore con parametri (usato nel ProductFacadeController)
-    public SuggestionsBatchDTO(List<ProductDTO> topRated, List<ProductDTO> bestPrices, List<ProductDTO> similar) {
+    public SuggestionsBatchDTO(List<ProductDTO> topRated, List<ProductDTO> bestPrice, List<ProductDTO> similar) {
         this.topRated = topRated;
-        this.bestPrices = bestPrices;
+        this.bestPrice = bestPrice;
         this.similar = similar;
     }
 
@@ -31,12 +31,12 @@ public class SuggestionsBatchDTO {
         this.topRated = topRated;
     }
 
-    public List<ProductDTO> getBestPrices() {
-        return bestPrices;
+    public List<ProductDTO> getBestPrice() {
+        return bestPrice;
     }
 
-    public void setBestPrices(List<ProductDTO> bestPrices) {
-        this.bestPrices = bestPrices;
+    public void setBestPrice(List<ProductDTO> bestPrice) {
+        this.bestPrice = bestPrice;
     }
 
     public List<ProductDTO> getSimilar() {

@@ -38,12 +38,12 @@ public class ProductFacadeController {
         ProductDTO bestPriceProduct = service.getBestPriceByCategory(category);
         String nameForSimilarity = chooseNameForSimilarity(productName, topRated);
 
-        List<ProductDTO> bestPrices = buildBestPriceList(bestPriceProduct);
+        List<ProductDTO> bestPrice = buildBestPriceList(bestPriceProduct);
         List<ProductDTO> similarProducts = buildSimilarProductsList(category, nameForSimilarity);
 
         return new SuggestionsBatchDTO(
             topRated,
-            bestPrices,
+            bestPrice,
             similarProducts
         );
     }

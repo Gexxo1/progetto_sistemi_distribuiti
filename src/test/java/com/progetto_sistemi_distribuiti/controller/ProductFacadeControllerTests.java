@@ -33,10 +33,10 @@ class ProductFacadeControllerTests {
                         .param("productName", "Apple MacBook Pro"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.topRated").isArray())
-                .andExpect(jsonPath("$.bestPrices").isArray())
+                .andExpect(jsonPath("$.bestPrice").isArray())
                 .andExpect(jsonPath("$.similar").isArray())
                 .andExpect(jsonPath("$.topRated[0].category").value("Laptops"))
-                .andExpect(jsonPath("$.bestPrices[0].category").value("Laptops"))
+                .andExpect(jsonPath("$.bestPrice[0].category").value("Laptops"))
                 .andExpect(jsonPath("$.similar[0].category").value("Laptops"));
     }
 

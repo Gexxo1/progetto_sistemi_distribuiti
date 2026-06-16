@@ -187,7 +187,7 @@ I risultati vengono aggregati in un'unica risposta:
 ```json
 {
   "topRated": [],
-  "bestPrices": [],
+  "bestPrice": [],
   "similar": []
 }
 ```
@@ -304,7 +304,7 @@ rating.
 se la categoria non contiene prodotti.
 
 Nel batch il singolo prodotto viene inserito in una lista chiamata
-`bestPrices`, così la struttura del DTO rimane uniforme rispetto alle altre
+`bestPrice`, così la struttura del DTO rimane uniforme rispetto alle altre
 sezioni.
 
 ### 4.4 Prodotti simili
