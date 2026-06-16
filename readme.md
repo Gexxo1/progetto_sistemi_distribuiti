@@ -34,6 +34,8 @@ Il sistema espone una Remote Facade HTTP sotto `/api/products`: il client non ac
 
 ## Struttura del progetto
 
+Codice applicativo principale:
+
 ```text
 src/main/java/com/progetto_sistemi_distribuiti
 |-- controller   API REST e Remote Facade
@@ -43,7 +45,17 @@ src/main/java/com/progetto_sistemi_distribuiti
 `-- security     login, JWT, filtri e regole di autorizzazione
 ```
 
-I dataset sono in `src/main/resources`. I test automatici sono in `src/test/java/com/progetto_sistemi_distribuiti`.
+Codice test automatici:
+
+```text
+src/test/java/com/progetto_sistemi_distribuiti
+```
+
+Le risorse e i dataset CSV si trovano in:
+
+```text
+src/main/resources
+```
 
 ## Utenti di prova
 
