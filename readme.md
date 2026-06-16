@@ -144,7 +144,7 @@ Authorization: Bearer <token>
 Esempio di dimostrazione manuale:
 1. Avviare l'applicazione `.\mvnw.cmd spring-boot:run` oppure avviare `ProgettoSistemiDistribuitiApplication.java`
 2. Effettuare il login `[POST] /api/auth/login`con `mario` (che ha ruolo `UTENTE`) compilando il JSON & inserire il token (per maggiori dettagli vedere `Esempi di chiamate pubbliche`).
-3. Mostrare il Request Batch con `[GET] /api/products/suggestions`.
+3. Mostrare il Request Batch con `[GET] api/products/similar?category=Laptops&productName=Apple%20MacBook%20Pro`.
 4. Mostrare la cronologia di sessione con `[GET] /api/products/my-history` dopo una ricerca.
 5. Effettuare il login `luigi` (come fatto in `#2`).
 6. Aggiungere una recensione con `[POST] /api/{id}/reviews`.
