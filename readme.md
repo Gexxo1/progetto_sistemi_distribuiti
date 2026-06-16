@@ -1,5 +1,8 @@
 # Progetto Sistemi Distribuiti
 
+**Studente:** Giuliano Spata  
+**Anno accademico:** 2025/2026
+
 Questo repository contiene il progetto d'esame per il corso di **Sistemi Distribuiti** della Laurea Magistrale in Informatica. L'applicazione e' un backend REST sviluppato in Java 17 con Spring Boot 3.2.0 per consultare e gestire un catalogo di prodotti caricato da file CSV.
 
 Il sistema espone una Remote Facade HTTP sotto `/api/products`: il client non accede direttamente alla logica applicativa o ai dataset, ma interagisce con un insieme di endpoint REST. Le operazioni di lettura sono pubbliche, mentre le operazioni di scrittura sono protette tramite autenticazione JWT e controllo dei ruoli.
